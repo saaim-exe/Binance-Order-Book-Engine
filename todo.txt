@@ -1,0 +1,34 @@
+---TO-DO---
+
+--DONE--
+
+- cancel order  // 
+- modify order (change existing order quantity/price) //
+- get best bid/ask // 
+ - // add heap allocation of aall order objects // helper function 
+ - match order (fifomatch.h/fifomatch.cpp)
+ - real time match quantity updates //
+ - connect with public api (binance)  // 
+
+
+
+--COMPLETE--
+
+- potentially add functionality for getting orderbook depth 
+- get level infos for each price level to avoid duplicate orders in same price 
+- connect with imgui 
+- calculate spread and visualize im gui + actual orderbook data 
+- remove order id in getpartial depth and instead replace with level info 
+
+
+-- TODAY -- 
+
+- Level class  // hr 2 
+- visualize orderbook -> depth chart, heatmap etc.. // hr3,4,5
+
+
+
+
+
+
+
