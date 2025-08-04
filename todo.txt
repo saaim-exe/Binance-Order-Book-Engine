@@ -9,6 +9,9 @@
  - match order (fifomatch.h/fifomatch.cpp)
  - real time match quantity updates //
  - connect with public api (binance)  // 
+ 
+- Level class  // hr 2 
+
 
 
 
@@ -21,9 +24,6 @@
 - remove order id in getpartial depth and instead replace with level info 
 
 
--- TODAY -- 
-
-- Level class  // hr 2 
 - visualize orderbook -> depth chart, heatmap etc.. // hr3,4,5
 
 

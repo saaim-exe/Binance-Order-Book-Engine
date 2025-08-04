@@ -174,9 +174,6 @@ std::vector<L3Data> Level::getL3Asks(const std::unique_ptr<OrderBook>& book) {
 	for (const auto& [price, orders] : asks)
 	{
 
-		OrderID id = 0;
-		Quantity totalQty = 0;
-		Timestamp timestamp;
 
 		for (const auto& order : orders)
 		{
