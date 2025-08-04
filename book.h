@@ -12,12 +12,6 @@
 #include <mutex>
 
 
-struct bookLevels {
-
-	Price price; 
-	Quantity quantity; 
-
-};
 
 class OrderBook {
 
@@ -63,6 +57,8 @@ public:
 
 		}
 	}
+
+	const std::unordered_map<OrderID, Order>& getOrderIndex() const; 
 
 	OrderID getBidIDs;
 	OrderID getAskIDs;

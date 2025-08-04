@@ -430,5 +430,10 @@ const std::map<Price, std::vector<Order>>& OrderBook::getAsks() const {
 };
 
 
+const std::unordered_map<OrderID, Order>& OrderBook::getOrderIndex() const {
+
+	return orderIndex; 
+}
+
 
 

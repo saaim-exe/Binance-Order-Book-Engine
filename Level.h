@@ -3,21 +3,44 @@
 #include "book.h"
 #include "order.h"
 
-// retrieves L1 , L2 data from orderbook 
+// retrieves L1 , L2 , L3 data from orderbook 
 
-class Level : OrderBook {
+
+struct bookLevels {
+
+	Price price;
+	Quantity quantity;
+};
+
+
+struct L3Data {
+
+	OrderID orderId;
+	Price price;
+	Quantity quantity;
+	Timestamp timestamp;
+
+};
+
+
+
+class Level  {
 
 public: 
-	void L1(); 
-	void L2();
-	void L3(); 
 
+
+	bookLevels getL1Bids(const std::unique_ptr<OrderBook>& book);
+	bookLevels getL1Asks(const std::unique_ptr<OrderBook>& book);
+
+	std::vector<bookLevels> getL2Bids(const std::unique_ptr<OrderBook>& book); // returns top 5 price levels + volume 
+	std::vector<bookLevels> getL2Asks(const std::unique_ptr<OrderBook>& book);// returns top 5 price levels + volume 
+
+	std::vector<L3Data> getL3Bids(const std::unique_ptr<OrderBook>& book); // full orderbook data 
+	std::vector <L3Data> getL3Asks(const std::unique_ptr<OrderBook>& book); // full orderbook data 
 
 
 private: 
 
-	Price bestBid = getBestBid(); 
-	Price bestAsk = getBestAsk(); 
 
 
 };
