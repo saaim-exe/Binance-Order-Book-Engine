@@ -10,21 +10,18 @@
  - real time match quantity updates //
  - connect with public api (binance)  // 
  
-- Level class  // hr 2 
+- Level class  // hr 2 //
 
+- get level infos for each price level to avoid duplicate orders in same price //
 
+- potentially add functionality for getting orderbook depth //
 
 
 --COMPLETE--
 
-- potentially add functionality for getting orderbook depth 
-- get level infos for each price level to avoid duplicate orders in same price 
-- connect with imgui 
-- calculate spread and visualize im gui + actual orderbook data 
-- remove order id in getpartial depth and instead replace with level info 
-
-
-- visualize orderbook -> depth chart, heatmap etc.. // hr3,4,5
+- establish kafka connection to allow stream between c++ and python file 
+- use python plotting tools (maplotlib etc.. ) to visualize real time orderbook data 
+- display spread (will need function for this) 
 
 
 

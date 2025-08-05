@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;BOOST_ASIO_NO_DEPRECATED;BOOST_ASIO_DISABLE_CONCEPTS;_SILENCE_CXX20_CISO646_REMOVED_WARNING;BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\vcpkg\installed\x64-windows\include\nlohmann;C:\vcpkg\installed\x64-windows\include\boost;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vcpkg\installed\x64-windows\include\nlohmann;C:\vcpkg\installed\x64-windows\include\boost;$(ProjectDir);C:\vcpkg\installed\x64-windows\include\librdkafka;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4146;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalOptions>/bigobj
  %(AdditionalOptions)</AdditionalOptions>
@@ -144,6 +144,7 @@
     <ClCompile Include="binanceapi.cpp" />
     <ClCompile Include="book.cpp" />
     <ClCompile Include="fifomatch.cpp" />
+    <ClCompile Include="kafka.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="order.cpp" />
@@ -154,7 +155,7 @@
     <ClInclude Include="fifo.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="order.h" />
-    <ClInclude Include="parsedata.hpp" />
+    <ClInclude Include="jsonconverter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt" />

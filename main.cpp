@@ -10,7 +10,18 @@
 #include "book.h"
 #include "fifo.h"
 #include "binanceapi.hpp"
-#include "parsedata.hpp"
+#include "Level.h"
+#include "jsonconverter.hpp"
+#include <librdkafka/rdkafkacpp.h>
+#include "kafka.cpp"
+
+
+static volatile sig_atomic_t run = 1;
+
+static void sigterm(int sig) {
+	run = 0;
+}
+
 
 using namespace Client; 
 
@@ -21,10 +32,98 @@ int main() {
 
 	auto book = std::make_unique<OrderBook>(); 
 	auto match = std::make_unique<FifoMatch>();
+	auto levels = std::make_unique<Level>(); 
 	
-	try {
-		Client::getPartialDepth(bids, asks, book, match); 
+	Client::getPartialDepth(bids, asks, book, match);
 
+
+	std::thread KafkaThread([&]() {
+
+	signal(SIGINT, sigterm);
+	signal(SIGTERM, sigterm);
+
+
+
+	std::string broker = "localhost:9802";
+	std::string topic_name = "orderbook";
+	std::string errstr;
+
+	RdKafka::Conf* conf = RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL);
+
+	DeliveryReport dr_cb;
+
+	if (conf->set("dr_cb", &dr_cb, errstr) != RdKafka::Conf::CONF_OK) {
+
+		std::cerr << errstr << std::endl;
+		exit(1);
+	}
+
+	RdKafka::Producer* producer = RdKafka::Producer::create(conf, errstr);
+
+	if (!producer)
+	{
+
+		std::cerr << "FAILED TO CREATE PRODUCER: " << errstr << std::endl;
+		exit(1);
+	}
+
+	delete conf;
+
+	while (run)
+	{
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+		std::string payload = OrderBooktoJSON(book, levels);
+
+		// quick debug to check if orderbook data is sent 
+
+		std::cout << "Payload: " << payload << std::endl;
+
+	retry:
+		RdKafka::ErrorCode err = producer->produce(
+
+			topic_name,
+
+			RdKafka::Topic::PARTITION_UA,
+
+			RdKafka::Producer::RK_MSG_COPY,
+
+			const_cast<char*>(payload.c_str()), payload.size(),
+
+			NULL, 0,
+
+			0,
+
+			NULL,
+
+			NULL);
+
+		if (err != RdKafka::ERR_NO_ERROR) {
+			std::cerr << "% Failed to produce to topic " << topic_name << ": "
+				<< RdKafka::err2str(err) << std::endl;
+
+			if (err == RdKafka::ERR__QUEUE_FULL) {
+
+				producer->poll(1000);
+				goto retry;
+			}
+
+		}
+		else {
+			std::cerr << "% Enqueued message (" << payload.size() << " bytes) "
+				<< "for topic " << topic_name << std::endl;
+		}
+
+		producer->poll(0);
+	}
+		producer->flush(10 * 1000);
+		delete producer;
+	}); 
+
+
+	try {
+		
 		std::thread displayThread([&book]() {
 
 
@@ -36,103 +135,21 @@ int main() {
 				// OrderBooktoFile(book);
 			}
 
-			}); 
+			});
 
-		Client::ioctx.run(); 
-		displayThread.join(); 
+		Client::ioctx.run();
+		displayThread.join();
+		
 	}
 	catch (const std::exception& ex)
 	{
 
-		std::cerr << "std::exception: " << ex.what() << std::endl; 
-	}
-	
-
-
-
-	
-
-
-
-	//std::unique_ptr<Order> orderObjBuy = makeOrder(1, 10.00, 100, Side::BUY, "10:00:00", OrderType::LIMIT);
-
-	
-	//std::string serialize = orderObjBuy->serializeOrder(); 
-
-	// std::cout << serialize << std::endl; 
-
-
-	/*
-	OrderID orderId = 111; 
-	Price price = 11.24; 
-
-	// int32convertertoDouble(price); 
-
-	Quantity quantity = 30; 
-	Timestamp timestamp = "5:35:05"; 
-
-
-
-	// Order order(orderId, price, quantity, Side::BUY, timestamp);
-
-	// std::unique_ptr<Order> orderObjBuy = std::make_unique<Order>(orderId, price, quantity, Side::BUY, timestamp);
-
-	
-
-
-
-	std::unique_ptr<OrderBook> book = std::make_unique<OrderBook>(); 
-
-
-	// BUY ORDERS
-
-
-
-
-	book->addOrder(std::move(makeOrder(1, 10.00, 100, Side::BUY, "10:00:00", OrderType::LIMIT))); 
-	book->addOrder(std::move(makeOrder(2, 10.50, 50, Side::BUY, "10:01:00", OrderType::LIMIT))); 
-	book->addOrder(std::move(makeOrder(3, 9.75, 75, Side::BUY, "10:02:00", OrderType::MARKET))); 
-
-
-	// SELL ORDERS 
-
-	book->addOrder(std::move(makeOrder(4, 9.80, 80, Side::SELL, "10:03:00", OrderType::LIMIT))); 
-	book->addOrder(std::move(makeOrder(5, 10.25, 60, Side::SELL, "10:04:00", OrderType::MARKET))); 
-	book->addOrder(std::move(makeOrder(6, 10.50, 40, Side::SELL, "10:05:00", OrderType::LIMIT))); 
-
-	book->displayOrder(); 
-
-
-	FifoMatch match; 
-
-	match.Match(book->getBids(), book->getAsks()); 
-
-	book->displayOrder(); 
-	book->getBestBidAsk(); 
-
-
-
-
-	/*
-
-
-	book->addOrder(*orderObjBuy); 
-	book->displayOrder(*orderObjBuy);
-	if (book->cancelOrder(orderId))
-	{
-		book->displayOrder(*orderObjBuy);
-		book->getBestBidAsk();
-	}
-	else
-	{
-		book->modifyOrder(orderId, price, quantity);
-		book->displayOrder(*orderObjBuy);
-		book->getBestBidAsk();
+		std::cerr << "std::exception: " << ex.what() << std::endl;
 	}
 
-	*/
-	
+	KafkaThread.join();
 
+	
 
 	return EXIT_SUCCESS; 
 }

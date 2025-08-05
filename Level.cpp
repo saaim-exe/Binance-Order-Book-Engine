@@ -14,7 +14,7 @@ bookLevels Level::getL1Bids(const std::unique_ptr<OrderBook>& book)
 
 		if (order.getPrice() == bestBid && order.getSide() == Side::BUY)
 		{
-				
+			
 			totalQty += order.getQuantity(); 
 
 		}
@@ -65,7 +65,7 @@ std::vector<bookLevels> Level::getL2Bids(const std::unique_ptr<OrderBook>& book)
 
 	for (const auto& [price, orders] : bids)
 	{
-		if (count < 5)
+		if (count >= 5)
 			break; 
 
 		Quantity totalQty = 0; 
@@ -129,6 +129,9 @@ std::vector<L3Data> Level::getL3Bids(const std::unique_ptr<OrderBook>& book) {
 
 
 	std::vector<L3Data> levels;
+	std::map<Price, Quantity> localdepth;
+	
+
 
 	const auto& bids = book->getBids(); 
 
@@ -139,23 +142,27 @@ std::vector<L3Data> Level::getL3Bids(const std::unique_ptr<OrderBook>& book) {
 
 		for (const auto& order : orders)
 		{
+
+			L3Data data{
+
+				order.getOrderId(),
+				order.getPrice(),
+				order.getQuantity(),
+				order.getTimestamp()
+			};
+
 			
-				L3Data data;
 
-				data.orderId = order.getOrderId();
-				data.price = order.getPrice();
-				data.quantity = order.getQuantity();
-				data.timestamp = order.getTimestamp();
-
-				levels.push_back(data); 
-
+			levels.push_back(data); 
+			localdepth[order.getPrice()] += order.getQuantity(); 
+				
 		}
 
 
 
 	}
 
-
+	this->bidDepth = localdepth; 
 
 
 
@@ -166,6 +173,9 @@ std::vector<L3Data> Level::getL3Asks(const std::unique_ptr<OrderBook>& book) {
 
 
 	std::vector<L3Data> levels;
+	std::map<Price, Quantity> localdepth;
+
+
 
 	const auto& asks = book->getAsks();
 
@@ -178,14 +188,16 @@ std::vector<L3Data> Level::getL3Asks(const std::unique_ptr<OrderBook>& book) {
 		for (const auto& order : orders)
 		{
 
-				L3Data data;
+			L3Data data{
 
-				data.orderId = order.getOrderId();
-				data.price = order.getPrice();
-				data.quantity = order.getQuantity();
-				data.timestamp = order.getTimestamp();
-
-				levels.push_back(data);
+				order.getOrderId(),
+				order.getPrice(),
+				order.getQuantity(),
+				order.getTimestamp()
+			};
+				
+			levels.push_back(data);
+			localdepth[order.getPrice()] += order.getQuantity(); 
 	
 		}
 
@@ -194,7 +206,7 @@ std::vector<L3Data> Level::getL3Asks(const std::unique_ptr<OrderBook>& book) {
 	}
 
 
-
+	this->askDepth = localdepth; 
 
 
 	return levels;

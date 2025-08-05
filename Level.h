@@ -23,7 +23,6 @@ struct L3Data {
 };
 
 
-
 class Level  {
 
 public: 
@@ -38,8 +37,25 @@ public:
 	std::vector<L3Data> getL3Bids(const std::unique_ptr<OrderBook>& book); // full orderbook data 
 	std::vector <L3Data> getL3Asks(const std::unique_ptr<OrderBook>& book); // full orderbook data 
 
+	const std::map<Price, Quantity>& getBidDepth() const {
+		return bidDepth;
+	}
+
+	const std::map<Price, Quantity>& getAskDepth() const {
+
+		return askDepth; 
+	}
+
+	// std::vector<Price> spread(const std::unique_ptr<OrderBook>& book); 
+
 
 private: 
+
+
+	std::map<Price, Quantity> bidDepth; 
+	std::map<Price, Quantity> askDepth; 
+	
+
 
 
 

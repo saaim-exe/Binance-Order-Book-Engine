@@ -54,7 +54,7 @@ void Client::getPartialDepth(std::map<double, double>& bids, std::map<double, do
                 book->addOrder(std::move(order));
             }
 
-            match->Match(book->getBids(), book->getAsks());
+           // match->Match(book->getBids(), book->getAsks());
 
             return true;
 

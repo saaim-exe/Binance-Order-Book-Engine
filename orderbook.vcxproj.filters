@@ -60,6 +60,9 @@
     <ClCompile Include="Level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="kafka.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="order.h">
@@ -74,7 +77,7 @@
     <ClInclude Include="binanceapi.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="parsedata.hpp">
+    <ClInclude Include="jsonconverter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Level.h">
