@@ -153,6 +153,7 @@
     <ClInclude Include="binanceapi.hpp" />
     <ClInclude Include="book.h" />
     <ClInclude Include="fifo.h" />
+    <ClInclude Include="kafka.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="order.h" />
     <ClInclude Include="jsonconverter.hpp" />
