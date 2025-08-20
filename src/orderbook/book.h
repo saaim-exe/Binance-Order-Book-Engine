@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <mutex>
+#include <shared_mutex>
 
 
 class OrderBook {
@@ -18,7 +19,19 @@ public:
 
 	OrderBook() = default;
 
-	void addOrder(std::unique_ptr<Order> orderObject);
+	void addOrder(std::unique_ptr<Order> orderObject); // FOR L3 STREAM 
+
+	void addOrder(std::unique_ptr<Order> orderObject, bool aggregate); // FOR L2 STREAM 
+
+	void applyL2Deltas(Side side, Price p, Quantity  q); 
+
+	void eraseLevel(Side side, Price p); 
+
+	void applyPartialDepthSnapshot(const std::unordered_map<Price, Quantity>& bidLevels, const std::unordered_map<Price, Quantity>& askLevels); 
+
+	//void beginPartialDepthSnapshot();
+	// void endPartialDepthSnapshot();
+
 	void displayOrder() const;
 	bool cancelOrder(OrderID& id);
 	bool modifyOrder(OrderID& id, Price& price, Quantity& quantity);
@@ -28,7 +41,7 @@ public:
 
 	OrderID generateID() {
 
-		std::lock_guard<std::mutex> lock(bookMutex);
+		std::lock_guard<std::shared_mutex> lock(bookMutex);
 
 		return nextID++;
 	} // random id generation 
@@ -59,6 +72,8 @@ public:
 
 	const std::unordered_map<OrderID, Order>& getOrderIndex() const;
 
+	std::shared_mutex& mutex() const { return bookMutex; }
+
 	OrderID getBidIDs;
 	OrderID getAskIDs;
 
@@ -75,6 +90,12 @@ private:
 
 	OrderID nextID = 1;
 
-	mutable std::mutex bookMutex; // access 
+	mutable std::shared_mutex bookMutex; // access 
+
+
+	// partial-depth snapshots 
+	uint64_t depthEpoch{ 0 }; 
+	std::unordered_map<Price, Quantity> seenBidEpoch; 
+	std::unordered_map<Price, Quantity> seenAskEpoch; 
 
 };

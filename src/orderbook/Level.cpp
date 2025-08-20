@@ -5,6 +5,7 @@ bookLevels Level::getL1Bids(const std::unique_ptr<OrderBook>& book)
 
 	Quantity totalQty = 0;
 	auto bestBid = book->getBestBid();
+	this->bestBid = bestBid; 
 
 
 	for (const auto& [id, order] : book->getOrderIndex())
@@ -29,7 +30,7 @@ bookLevels Level::getL1Asks(const std::unique_ptr<OrderBook>& book)
 
 	Quantity totalQty = 0;
 	auto bestAsk = book->getBestAsk();
-
+	this->bestAsk = bestAsk; 
 
 	for (const auto& [id, order] : book->getOrderIndex())
 	{
@@ -51,18 +52,19 @@ bookLevels Level::getL1Asks(const std::unique_ptr<OrderBook>& book)
 }
 
 
-std::vector<bookLevels> Level::getL2Bids(const std::unique_ptr<OrderBook>& book)
+std::vector<bookLevels> Level::getL2Bids(const std::unique_ptr<OrderBook>& book, std::size_t topN)
 {
 
 	std::vector<bookLevels> levels;
+	levels.reserve(topN); 
 
 	const auto& bids = book->getBids();
 
-	int count = 0;
+	std::size_t count = 0;
 
 	for (const auto& [price, orders] : bids)
 	{
-		if (count >= 5)
+		if (count >= topN)
 			break;
 
 		Quantity totalQty = 0;
@@ -85,18 +87,19 @@ std::vector<bookLevels> Level::getL2Bids(const std::unique_ptr<OrderBook>& book)
 	return levels;
 }
 
-std::vector<bookLevels> Level::getL2Asks(const std::unique_ptr<OrderBook>& book)
+std::vector<bookLevels> Level::getL2Asks(const std::unique_ptr<OrderBook>& book, std::size_t topN)
 {
 
 	std::vector<bookLevels> levels;
+	levels.reserve(topN); 
 
 	const auto& asks = book->getAsks();
 
-	int count = 0;
+	std::size_t count = 0;
 
 	for (const auto& [price, orders] : asks)
 	{
-		if (count >= 5)
+		if (count >= topN)
 		{
 			break;
 		}
@@ -209,3 +212,5 @@ std::vector<L3Data> Level::getL3Asks(const std::unique_ptr<OrderBook>& book) {
 	return levels;
 
 }
+
+

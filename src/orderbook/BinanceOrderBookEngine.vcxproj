@@ -172,11 +172,15 @@
     <ClInclude Include="kafka.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="order.h" />
+    <ClInclude Include="ticks.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\binapi_lib\binapi_lib.vcxproj">
       <Project>{9a89c34c-84ac-4d3e-925d-bc376f866c2d}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="todo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

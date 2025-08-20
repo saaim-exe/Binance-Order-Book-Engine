@@ -107,5 +107,11 @@
     <ClInclude Include="kafka.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ticks.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="todo.txt" />
   </ItemGroup>
 </Project>

@@ -23,9 +23,6 @@
     <Compile Include="consumer.py" />
     <Compile Include="main.py" />
     <Compile Include="models.py" />
-    <Compile Include="processing.py" />
-    <Compile Include="utils.py" />
-    <Compile Include="visualize.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
