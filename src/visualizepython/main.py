@@ -1,10 +1,16 @@
 from PyQt5.QtCore import QSize, QTimer, Qt
 from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QLabel, QHeaderView, QAbstractItemView, QSizePolicy
+from PyQt5.QtGui import QColor, QBrush
 import pyqtgraph as pg
 import numpy as np
 from pyqtgraph.Qt import QtCore, QtGui
 import sys, queue, threading
 from consumer import consumer_thread
+
+
+BID_COLOR = QColor(0, 210, 130)   # green
+ASK_COLOR = QColor(255, 120, 120) # red
+
 
 
 class MainWindow(QMainWindow):
@@ -62,13 +68,47 @@ class MainWindow(QMainWindow):
         self.table_bids.verticalHeader().setVisible(False)
         self.table_bids.setStyleSheet("border: 1px solid black;")
         self.table_bids.setEditTriggers(self.table_bids.NoEditTriggers)
-        
+
+        self.table_bids.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table_bids.setAlternatingRowColors(True)
+        self.table_bids.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.table_bids.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table_bids.setStyleSheet("""
+            QTableWidget {
+            background-color: #111;
+            color: #eee;
+            gridline-color: #444;
+            alternate-background-color: #1a1a1a;
+            }
+            QHeaderView::section {
+            background-color: #222;
+            color: #9BE7A8;    /* green-ish header text */
+            }
+            """)
+
         self.table_asks = QTableWidget(0, 2)
         self.table_asks.setHorizontalHeaderLabels(["Ask Price", "Ask Qty"])
         self.table_asks.verticalHeader().setVisible(False)
         self.table_asks.setStyleSheet("border: 1px solid black;")
         self.table_asks.setEditTriggers(self.table_bids.NoEditTriggers)
         
+        self.table_asks.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table_asks.setAlternatingRowColors(True)
+        self.table_asks.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.table_asks.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table_asks.setStyleSheet("""
+            QTableWidget {
+              background-color: #111;
+              color: #eee;
+              gridline-color: #444;
+              alternate-background-color: #1a1a1a;
+            }
+            QHeaderView::section {
+              background-color: #222;
+              color: #FFB3B3;    /* red-ish header text */
+            }
+            """)
+
         for tbl in (self.table_bids, self.table_asks):
             tbl.setSelectionMode(QAbstractItemView.NoSelection)
             tbl.setAlternatingRowColors(True)
@@ -176,12 +216,14 @@ class MainWindow(QMainWindow):
         self.timer.start(50)
 
 
-    def fill_order_table(self, table: QTableWidget, levels):
+    def fill_order_table(self, table: QTableWidget, levels, color: QColor):
         
         table.setSortingEnabled(False)
         n = len(levels)
         if table.rowCount() != n:
             table.setRowCount(n)
+            
+        brush = QBrush(color)
        
         for r, lv in enumerate(levels):
             p = lv.get("price", "")
@@ -194,9 +236,11 @@ class MainWindow(QMainWindow):
                     item = QTableWidgetItem(text)
                     item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
                     item.setFlags(Qt.ItemIsEnabled)
+                    item.setForeground(brush)
                     table.setItem(r, c, item)
                 elif item.text() != text: 
                     item.setText(text)
+                    item.setForeground(brush)
     
                
         
@@ -222,8 +266,8 @@ class MainWindow(QMainWindow):
             if s is not None: self.label_spread.setText(f"spread: {s:.4f}")
             if m is not None: self.label_mid.setText(f"mid: {m:.4f}")
         
-            self.fill_order_table(self.table_bids, item.get("bids", []))
-            self.fill_order_table(self.table_asks, item.get("asks", []))
+            self.fill_order_table(self.table_bids, item.get("bids", []), BID_COLOR)
+            self.fill_order_table(self.table_asks, item.get("asks", []), ASK_COLOR)
 
         #filling heatmap + ba / bb
         
