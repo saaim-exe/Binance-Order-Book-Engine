@@ -1,11 +1,5 @@
 # Binance Order Book Engine
 
-![C++](https://img.shields.io/badge/C++-17-blue?logo=c%2B%2B&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?logo=python&logoColor=white)
-![Kafka](https://img.shields.io/badge/Kafka-Streaming-black?logo=apachekafka)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey)
-![License](https://img.shields.io/badge/License-MIT-green)
-
 What initially began as a simple-console based order book engine in C++ slowly evolved into a real-time streaming system that pulls live L2 depth data from Binance, pushes it through Kafka, and visualizes with a custom Python GUI. 
 
 This project became my first true end-to-end build, combining C++ networking, Kafka streaming, and Python visualization into one working system. 
