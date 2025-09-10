@@ -46,7 +46,7 @@ python main.py
 ## Third-Party Libraries
 This project makes use of the following open-source libraries: 
 - [nlohmann/json](https://github.com/nlohmann/json) (MIT License)  
-- [binapi](https://github.com/eyalroz/binapi) (see repo for license)  
+- [binapi](https://github.com/niXman/binapi) (see repo for license)  
 - [pyqtgraph](https://www.pyqtgraph.org/) (MIT License)  
 - [PyQt5](https://pypi.org/project/PyQt5/) (GPL / commercial, free for open use)  
 - [kafka-python](https://github.com/dpkp/kafka-python) (Apache 2.0 License)  
