@@ -21,3 +21,6 @@ Release/
 *.tlog
 *.ipch
 *.idb
+
+# Docker
+*.log
